@@ -2,6 +2,7 @@ package sentinelone
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -79,6 +80,54 @@ func (c *SentinelOneClient) Get(fullURL string) ([]byte, error) {
 		}
 	}
 	return body, nil
+}
+
+// Fetch unprocessed data from the API with a limit for pagination.
+func (t *SentinelOneClient) fetchPaginatedData(endpoint string, limitPerPage int) ([]interface{}, map[string]interface{}, []interface{}, error) {
+	var allData []interface{}
+	var lastPagination map[string]interface{}
+	var lastErrors []interface{}
+	cursor := ""
+
+	for {
+		params := map[string]string{
+			"limit": fmt.Sprintf("%d", limitPerPage),
+		}
+		if cursor != "" {
+			params["cursor"] = cursor
+		}
+
+		fullURL, err := t.BuildURL(endpoint, params)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		body, err := t.Get(fullURL)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		var resp struct {
+			Data       []interface{}          `json:"data"`
+			Pagination map[string]interface{} `json:"pagination"`
+			Errors     []interface{}          `json:"errors"`
+		}
+		if err := json.Unmarshal(body, &resp); err != nil {
+			return nil, nil, nil, fmt.Errorf("failed to parse JSON: %w", err)
+		}
+
+		allData = append(allData, resp.Data...)
+		lastPagination = resp.Pagination
+		lastErrors = resp.Errors
+
+		nextCursor, _ := resp.Pagination["nextCursor"].(string)
+		if nextCursor == "" || nextCursor == cursor {
+			break
+		}
+		cursor = nextCursor
+	}
+
+	return allData, lastPagination, lastErrors, nil
 }
 
 // authTransport injects the Authorization header into every request
