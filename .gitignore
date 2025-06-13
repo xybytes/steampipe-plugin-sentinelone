@@ -28,5 +28,8 @@
 !.vscode/extensions.json
 *.code-workspace
 
+# Mac OSX File
+.DS_Store
+
 # Working Directory
 .local/
