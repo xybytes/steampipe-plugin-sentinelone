@@ -82,13 +82,28 @@ func (c *SentinelOneClient) Get(fullURL string) ([]byte, error) {
 	return body, nil
 }
 
-// Fetch unprocessed data from the API with a limit for pagination.
-func (t *SentinelOneClient) fetchPaginatedData(endpoint string, limitPerPage int) ([]interface{}, map[string]interface{}, []interface{}, error) {
-	var allData []interface{}
-	var lastPagination map[string]interface{}
-	var lastErrors []interface{}
-	cursor := ""
+// Fetch unprocessed data from the API with pagination, stops early if the SQL LIMIT is hit.
+// Fetching all data in a single call becomes extremely slow once the dataset exceeds ~10,000 records.
+// The SentinelOne API enforces a maximum page size of 1,000.
+func (t *SentinelOneClient) fetchPaginatedData(
+	ctx context.Context,
+	d *plugin.QueryData,
+	endpoint string,
+	limitPerPage int,
+) ([]interface{}, map[string]interface{}, []interface{}, error) {
+	var (
+		allData        []interface{}
+		lastPagination map[string]interface{}
+		lastErrors     []interface{}
+		cursor         string
+	)
 
+	var totalLimit int
+	if d.QueryContext.Limit != nil {
+		totalLimit = int(*d.QueryContext.Limit)
+	}
+
+outer:
 	for {
 		params := map[string]string{
 			"limit": fmt.Sprintf("%d", limitPerPage),
@@ -101,7 +116,6 @@ func (t *SentinelOneClient) fetchPaginatedData(endpoint string, limitPerPage int
 		if err != nil {
 			return nil, nil, nil, err
 		}
-
 		body, err := t.Get(fullURL)
 		if err != nil {
 			return nil, nil, nil, err
@@ -116,7 +130,14 @@ func (t *SentinelOneClient) fetchPaginatedData(endpoint string, limitPerPage int
 			return nil, nil, nil, fmt.Errorf("failed to parse JSON: %w", err)
 		}
 
-		allData = append(allData, resp.Data...)
+		for _, item := range resp.Data {
+			allData = append(allData, item)
+			if totalLimit > 0 && len(allData) >= totalLimit {
+				lastPagination = resp.Pagination
+				lastErrors = resp.Errors
+				break outer
+			}
+		}
 		lastPagination = resp.Pagination
 		lastErrors = resp.Errors
 
@@ -183,3 +204,52 @@ func Connect(_ context.Context, d *plugin.QueryData) (*SentinelOneClient, error)
 	d.ConnectionManager.Cache.Set(cacheKey, client)
 	return client, nil
 }
+
+/*
+// Fetch unprocessed data from the API with pagination. (No SQL Limit)
+func (t *SentinelOneClient) fetchPaginatedData(endpoint string, limitPerPage int) ([]interface{}, map[string]interface{}, []interface{}, error) {
+	var allData []interface{}
+	var lastPagination map[string]interface{}
+	var lastErrors []interface{}
+	cursor := ""
+
+	for {
+		params := map[string]string{
+			"limit": fmt.Sprintf("%d", limitPerPage),
+		}
+		if cursor != "" {
+			params["cursor"] = cursor
+		}
+
+		fullURL, err := t.BuildURL(endpoint, params)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		body, err := t.Get(fullURL)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		var resp struct {
+			Data       []interface{}          `json:"data"`
+			Pagination map[string]interface{} `json:"pagination"`
+			Errors     []interface{}          `json:"errors"`
+		}
+		if err := json.Unmarshal(body, &resp); err != nil {
+			return nil, nil, nil, fmt.Errorf("failed to parse JSON: %w", err)
+		}
+
+		allData = append(allData, resp.Data...)
+		lastPagination = resp.Pagination
+		lastErrors = resp.Errors
+
+		nextCursor, _ := resp.Pagination["nextCursor"].(string)
+		if nextCursor == "" || nextCursor == cursor {
+			break
+		}
+		cursor = nextCursor
+	}
+
+	return allData, lastPagination, lastErrors, nil
+}*/
