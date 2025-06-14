@@ -104,7 +104,7 @@ type SentinelOneAgentFull struct {
 func tableSentinelOneAgents(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_agent",
-		Description: "Elenco degli agenti SentinelOne installati sugli endpoint.",
+		Description: "List of SentinelOne agents installed on endpoints.",
 		List: &plugin.ListConfig{
 			Hydrate: listSentinelOneAgents,
 		},
