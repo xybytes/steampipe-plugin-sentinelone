@@ -11,11 +11,11 @@ import (
 
 // top-level “envelope” for a single alert
 type SentinelOneAlertFull struct {
-	AlertInfo           AlertInfo          `json:"alertInfo"`
-	RuleInfo            RuleInfo           `json:"ruleInfo"`
-	SourceParentProcess ProcessInfo        `json:"sourceParentProcessInfo"`
-	AgentDetectionInfo  AgentDetectionInfo `json:"agentDetectionInfo"`
-	TargetProcessInfo   TargetProcessInfo  `json:"targetProcessInfo"`
+	AlertInfo           AlertInfo   `json:"alertInfo"`
+	RuleInfo            RuleInfo    `json:"ruleInfo"`
+	SourceParentProcess ProcessInfo `json:"sourceParentProcessInfo"`
+	//AgentDetectionInfo  AgentDetectionInfo `json:"agentDetectionInfo"`
+	TargetProcessInfo TargetProcessInfo `json:"targetProcessInfo"`
 }
 
 // corresponds to the JSON object at .alertInfo
@@ -186,14 +186,14 @@ func tableSentinelOneAlerts(_ context.Context) *plugin.Table {
 			{Name: "source_parent_pid_start_time", Type: sdkproto.ColumnType_TIMESTAMP, Transform: transform.FromField("SourceParentProcess.PIDStartTime")},
 			{Name: "source_parent_unique_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("SourceParentProcess.UniqueID")},
 			// AgentDetectionInfo
-			{Name: "agent_os_family", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.OSFamily")},
+			/*{Name: "agent_os_family", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.OSFamily")},
 			{Name: "agent_os_name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.OSName")},
 			{Name: "agent_machine_type", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.MachineType")},
 			{Name: "agent_uuid", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.UUID")},
 			{Name: "agent_site_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.SiteId")},
 			{Name: "agent_name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.Name")},
 			{Name: "agent_os_revision", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.OSRevision")},
-			{Name: "agent_version", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.Version")},
+			{Name: "agent_version", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.Version")},*/
 			//TargetProcessInfo
 			{Name: "target_file_path", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("TargetProcessInfo.FilePath")},
 			{Name: "target_file_is_signed", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("TargetProcessInfo.FileIsSigned")},

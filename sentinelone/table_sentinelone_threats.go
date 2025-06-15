@@ -15,7 +15,6 @@ type SentinelOneThreat struct {
 	ThreatInfo         ThreatInfo         `json:"threatInfo"`
 	AgentRealtimeInfo  AgentRealtimeInfo  `json:"agentRealtimeInfo"`
 	AgentDetectionInfo AgentDetectionInfo `json:"agentDetectionInfo"`
-	MitigationStatus   []MitigationStatus `json:"mitigationStatus"`
 }
 
 type ThreatInfo struct {
@@ -31,91 +30,57 @@ type ThreatInfo struct {
 }
 
 type AgentRealtimeInfo struct {
-	AgentIsActive         bool          `json:"agentIsActive"`
-	ScanStartedAt         time.Time     `json:"scanStartedAt"`
-	RebootRequired        bool          `json:"rebootRequired"`
-	ScanStatus            string        `json:"scanStatus"`
-	ScanAbortedAt         time.Time     `json:"scanAbortedAt"`
-	SiteName              string        `json:"siteName"`
-	AgentOsName           string        `json:"agentOsName"`
-	AgentInfected         bool          `json:"agentInfected"`
-	AgentDomain           string        `json:"agentDomain"`
-	AgentDecommissioned   bool          `json:"agentDecommissionedAt"`
-	AgentNetworkStatus    string        `json:"agentNetworkStatus"`
-	AgentUuid             string        `json:"agentUuid"`
-	OperationalState      string        `json:"operationalState"`
-	ScanFinishedAt        time.Time     `json:"scanFinishedAt"`
-	AgentMitigationMode   string        `json:"agentMitigationMode"`
-	ActiveThreats         int           `json:"activeThreats"`
-	AgentOsType           string        `json:"agentOsType"`
-	AgentOsRevision       string        `json:"agentOsRevision"`
-	GroupId               string        `json:"groupId"`
-	GroupName             string        `json:"groupName"`
-	AgentVersion          string        `json:"agentVersion"`
-	StorageName           string        `json:"storageName"`
-	AccountName           string        `json:"accountName"`
-	AccountId             string        `json:"accountId"`
-	AgentMachineType      string        `json:"agentMachineType"`
-	AgentIsDecommissioned bool          `json:"agentIsDecommissioned"`
-	AgentComputerName     string        `json:"agentComputerName"`
-	SiteId                string        `json:"siteId"`
-	UserActionsNeeded     []interface{} `json:"userActionsNeeded"`
-	NetworkInterfaces     []interface{} `json:"networkInterfaces"`
-	AgentId               string        `json:"agentId"`
-	StorageType           string        `json:"storageType"`
+	AgentIsActive         bool               `json:"agentIsActive"`
+	ScanStartedAt         time.Time          `json:"scanStartedAt"`
+	RebootRequired        bool               `json:"rebootRequired"`
+	ScanStatus            string             `json:"scanStatus"`
+	ScanAbortedAt         time.Time          `json:"scanAbortedAt"`
+	SiteName              string             `json:"siteName"`
+	AgentOsName           string             `json:"agentOsName"`
+	AgentInfected         bool               `json:"agentInfected"`
+	AgentDomain           string             `json:"agentDomain"`
+	AgentDecommissioned   bool               `json:"agentDecommissionedAt"`
+	AgentNetworkStatus    string             `json:"agentNetworkStatus"`
+	AgentUuid             string             `json:"agentUuid"`
+	OperationalState      string             `json:"operationalState"`
+	ScanFinishedAt        time.Time          `json:"scanFinishedAt"`
+	AgentMitigationMode   string             `json:"agentMitigationMode"`
+	ActiveThreats         int                `json:"activeThreats"`
+	AgentOsType           string             `json:"agentOsType"`
+	AgentOsRevision       string             `json:"agentOsRevision"`
+	GroupId               string             `json:"groupId"`
+	GroupName             string             `json:"groupName"`
+	AccountName           string             `json:"accountName"`
+	AccountId             string             `json:"accountId"`
+	AgentMachineType      string             `json:"agentMachineType"`
+	AgentIsDecommissioned bool               `json:"agentIsDecommissioned"`
+	AgentComputerName     string             `json:"agentComputerName"`
+	SiteId                string             `json:"siteId"`
+	AgentId               string             `json:"agentId"`
+	NetworkInterfaces     []NetworkInterface `json:"networkInterfaces"`
 }
 
 type AgentDetectionInfo struct {
-	AgentLastLoggedInUserMail string      `json:"agentLastLoggedInUserMail"`
-	AgentVersion              string      `json:"agentVersion"`
-	AgentDomain               string      `json:"agentDomain"`
-	AgentUuid                 string      `json:"agentUuid"`
-	AgentMitigationMode       string      `json:"agentMitigationMode"`
-	AgentIpV4                 string      `json:"agentIpV4"`
-	GroupId                   string      `json:"groupId"`
-	AgentRegisteredAt         time.Time   `json:"agentRegisteredAt"`
-	AgentDetectionState       string      `json:"agentDetectionState"`
-	ExternalIp                string      `json:"externalIp"`
-	AgentLastLoggedInUpn      string      `json:"agentLastLoggedInUpn"`
-	GroupName                 string      `json:"groupName"`
-	AgentIpV6                 string      `json:"agentIpV6"`
-	AgentOsRevision           string      `json:"agentOsRevision"`
-	AgentOsName               string      `json:"agentOsName"`
-	SiteName                  string      `json:"siteName"`
-	SiteId                    string      `json:"siteId"`
-	AccountName               string      `json:"accountName"`
-	AssetVersion              string      `json:"assetVersion"`
-	AccountId                 string      `json:"accountId"`
-	AgentLastLoggedInUserName string      `json:"agentLastLoggedInUserName"`
-	CloudProviders            interface{} `json:"cloudProviders"`
-
-	// Alerts Fields
-	OSFamily    string `json:"osFamily"`
-	OSName      string `json:"osName"`
-	Name        string `json:"name"`
-	OSRevision  string `json:"osRevision"`
-	UUID        string `json:"uuid"`
-	MachineType string `json:"machineType"`
-	Version     string `json:"version"`
-}
-
-type MitigationStatus struct {
-	Status            string    `json:"status"`
-	Action            string    `json:"action"`
-	ReportId          string    `json:"reportId"`
-	MitigationStarted time.Time `json:"mitigationStartedAt"`
-	MitigationEnded   time.Time `json:"mitigationEndedAt"`
-	AgentSupports     bool      `json:"agentSupportsReport"`
-	GroupNotFound     bool      `json:"groupNotFound"`
-	LatestReport      string    `json:"latestReport"`
-	LastUpdate        time.Time `json:"lastUpdate"`
-	ActionsCounters   struct {
-		Total         int `json:"total"`
-		Success       int `json:"success"`
-		Failed        int `json:"failed"`
-		PendingReboot int `json:"pendingReboot"`
-		NotFound      int `json:"notFound"`
-	} `json:"actionsCounters"`
+	AgentLastLoggedInUserMail string    `json:"agentLastLoggedInUserMail"`
+	AgentDomain               string    `json:"agentDomain"`
+	AgentUuid                 string    `json:"agentUuid"`
+	AgentMitigationMode       string    `json:"agentMitigationMode"`
+	AgentIpV4                 string    `json:"agentIpV4"`
+	GroupId                   string    `json:"groupId"`
+	AgentRegisteredAt         time.Time `json:"agentRegisteredAt"`
+	AgentDetectionState       string    `json:"agentDetectionState"`
+	ExternalIp                string    `json:"externalIp"`
+	AgentLastLoggedInUpn      string    `json:"agentLastLoggedInUpn"`
+	GroupName                 string    `json:"groupName"`
+	AgentIpV6                 string    `json:"agentIpV6"`
+	AgentOsRevision           string    `json:"agentOsRevision"`
+	AgentOsName               string    `json:"agentOsName"`
+	SiteName                  string    `json:"siteName"`
+	SiteId                    string    `json:"siteId"`
+	AccountName               string    `json:"accountName"`
+	AssetVersion              string    `json:"assetVersion"`
+	AccountId                 string    `json:"accountId"`
+	AgentLastLoggedInUserName string    `json:"agentLastLoggedInUserName"`
 }
 
 type NetworkInterface struct {
@@ -168,22 +133,17 @@ func tableSentinelOneThreats(_ context.Context) *plugin.Table {
 			{Name: "agent_os_revision", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.AgentOsRevision")},
 			{Name: "group_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.GroupId")},
 			{Name: "group_name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.GroupName")},
-			{Name: "agent_version", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.AgentVersion")},
-			{Name: "storage_name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.StorageName")},
 			{Name: "account_name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.AccountName")},
 			{Name: "account_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.AccountId")},
 			{Name: "agent_machine_type", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.AgentMachineType")},
 			{Name: "agent_is_decommissioned", Type: sdkproto.ColumnType_BOOL, Transform: transform.FromField("AgentRealtimeInfo.AgentIsDecommissioned")},
 			{Name: "agent_computer_name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.AgentComputerName")},
 			{Name: "site_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.SiteId")},
-			{Name: "user_actions_needed", Type: sdkproto.ColumnType_JSON, Transform: transform.FromField("AgentRealtimeInfo.UserActionsNeeded")},
 			{Name: "network_interfaces", Type: sdkproto.ColumnType_JSON, Transform: transform.FromField("AgentRealtimeInfo.NetworkInterfaces")},
 			{Name: "agent_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.AgentId")},
-			{Name: "storage_type", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentRealtimeInfo.StorageType")},
 
 			//AgentDetectionInfo
 			{Name: "agent_last_logged_in_user_mail", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.AgentLastLoggedInUserMail")},
-			{Name: "agent_detection_version", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.AgentVersion")},
 			{Name: "agent_detection_domain", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.AgentDomain")},
 			{Name: "agent_detection_uuid", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.AgentUuid")},
 			{Name: "agent_detection_mitigation_mode", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.AgentMitigationMode")},
@@ -201,108 +161,6 @@ func tableSentinelOneThreats(_ context.Context) *plugin.Table {
 			{Name: "detection_account_name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.AccountName")},
 			{Name: "detection_account_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.AccountId")},
 			{Name: "agent_last_logged_in_user_name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AgentDetectionInfo.AgentLastLoggedInUserName")},
-			{Name: "cloud_providers", Type: sdkproto.ColumnType_JSON, Transform: transform.FromField("AgentDetectionInfo.CloudProviders")},
-
-			//networkInterfaces
-			{Name: "network_interfaces", Type: sdkproto.ColumnType_JSON, Transform: transform.FromField("AgentRealtimeInfo.NetworkInterfaces")},
-
-			// mitigation
-			{
-				Name: "mitigation_status_status",
-				Type: sdkproto.ColumnType_STRING,
-				Transform: transform.FromField("MitigationStatus").Transform(
-					func(_ context.Context, d *transform.TransformData) (interface{}, error) {
-						if list, ok := d.Value.([]MitigationStatus); ok && len(list) > 0 {
-							return list[0].Status, nil
-						}
-						return nil, nil
-					},
-				),
-			},
-
-			{Name: "mitigation_status_agent_supports",
-				Type: sdkproto.ColumnType_BOOL,
-				Transform: transform.FromField("MitigationStatus").Transform(func(_ context.Context, d *transform.TransformData) (interface{}, error) {
-					if list, ok := d.Value.([]MitigationStatus); ok && len(list) > 0 {
-						return list[0].AgentSupports, nil
-					}
-					return nil, nil
-				}),
-			},
-
-			{Name: "mitigation_status_group_not_found",
-				Type: sdkproto.ColumnType_BOOL,
-				Transform: transform.FromField("MitigationStatus").Transform(func(_ context.Context, d *transform.TransformData) (interface{}, error) {
-					if list, ok := d.Value.([]MitigationStatus); ok && len(list) > 0 {
-						return list[0].GroupNotFound, nil
-					}
-					return nil, nil
-				}),
-			},
-			{Name: "mitigation_status_latest_report",
-				Type: sdkproto.ColumnType_STRING,
-				Transform: transform.FromField("MitigationStatus").Transform(func(_ context.Context, d *transform.TransformData) (interface{}, error) {
-					if list, ok := d.Value.([]MitigationStatus); ok && len(list) > 0 {
-						return list[0].LatestReport, nil
-					}
-					return nil, nil
-				}),
-			},
-			{Name: "mitigation_status_last_update",
-				Type: sdkproto.ColumnType_TIMESTAMP,
-				Transform: transform.FromField("MitigationStatus").Transform(func(_ context.Context, d *transform.TransformData) (interface{}, error) {
-					if list, ok := d.Value.([]MitigationStatus); ok && len(list) > 0 {
-						return list[0].LastUpdate, nil
-					}
-					return nil, nil
-				}),
-			},
-
-			{Name: "mitigation_actions_total",
-				Type: sdkproto.ColumnType_INT,
-				Transform: transform.FromField("MitigationStatus").Transform(func(_ context.Context, d *transform.TransformData) (interface{}, error) {
-					if list, ok := d.Value.([]MitigationStatus); ok && len(list) > 0 {
-						return list[0].ActionsCounters.Total, nil
-					}
-					return nil, nil
-				}),
-			},
-			{Name: "mitigation_actions_success",
-				Type: sdkproto.ColumnType_INT,
-				Transform: transform.FromField("MitigationStatus").Transform(func(_ context.Context, d *transform.TransformData) (interface{}, error) {
-					if list, ok := d.Value.([]MitigationStatus); ok && len(list) > 0 {
-						return list[0].ActionsCounters.Success, nil
-					}
-					return nil, nil
-				}),
-			},
-			{Name: "mitigation_actions_failed",
-				Type: sdkproto.ColumnType_INT,
-				Transform: transform.FromField("MitigationStatus").Transform(func(_ context.Context, d *transform.TransformData) (interface{}, error) {
-					if list, ok := d.Value.([]MitigationStatus); ok && len(list) > 0 {
-						return list[0].ActionsCounters.Failed, nil
-					}
-					return nil, nil
-				}),
-			},
-			{Name: "mitigation_actions_pending_reboot",
-				Type: sdkproto.ColumnType_INT,
-				Transform: transform.FromField("MitigationStatus").Transform(func(_ context.Context, d *transform.TransformData) (interface{}, error) {
-					if list, ok := d.Value.([]MitigationStatus); ok && len(list) > 0 {
-						return list[0].ActionsCounters.PendingReboot, nil
-					}
-					return nil, nil
-				}),
-			},
-			{Name: "mitigation_actions_not_found",
-				Type: sdkproto.ColumnType_INT,
-				Transform: transform.FromField("MitigationStatus").Transform(func(_ context.Context, d *transform.TransformData) (interface{}, error) {
-					if list, ok := d.Value.([]MitigationStatus); ok && len(list) > 0 {
-						return list[0].ActionsCounters.NotFound, nil
-					}
-					return nil, nil
-				}),
-			},
 		},
 	}
 }
