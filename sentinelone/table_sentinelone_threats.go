@@ -19,6 +19,7 @@ type SentinelOneThreat struct {
 
 type ThreatInfo struct {
 	ThreatName      string    `json:"threatName"`
+	ThreatId        string    `json:"threatId"`
 	IdentifiedAt    time.Time `json:"identifiedAt"`
 	ConfidenceLevel string    `json:"confidenceLevel"`
 	IncidentStatus  string    `json:"incidentStatus"`
@@ -103,6 +104,7 @@ func tableSentinelOneThreats(_ context.Context) *plugin.Table {
 
 			// ThreatInfo
 			{Name: "threat_name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("ThreatInfo.ThreatName")},
+			{Name: "threat_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("ThreatInfo.ThreatId")},
 			{Name: "identified_at", Type: sdkproto.ColumnType_TIMESTAMP, Transform: transform.FromField("ThreatInfo.IdentifiedAt")},
 			{Name: "confidence_level", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("ThreatInfo.ConfidenceLevel")},
 			{Name: "incident_status", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("ThreatInfo.IncidentStatus")},

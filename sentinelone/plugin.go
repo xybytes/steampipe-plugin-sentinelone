@@ -19,6 +19,7 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			"sentinelone_alert":    tableSentinelOneAlerts(ctx),
 			"sentinelone_threat":   tableSentinelOneThreats(ctx),
 			"sentinelone_timeline": tableSentinelOneTimeline(ctx),
+			"sentinelone_note":     tableSentinelOneNotes(ctx),
 		},
 	}
 }
