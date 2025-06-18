@@ -94,8 +94,8 @@ type NetworkInterface struct {
 
 func tableSentinelOneThreats(_ context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "sentinelone_threat",
-		Description: "Threats from SentinelOne.",
+		Name:        "sentinelone_threats",
+		Description: "Get data of threats",
 		List: &plugin.ListConfig{
 			Hydrate: listSentinelOneThreats,
 		},

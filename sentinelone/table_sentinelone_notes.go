@@ -24,8 +24,8 @@ type SentinelOneNoteFull struct {
 // Defines the Steampipe table
 func tableSentinelOneNotes(_ context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "sentinelone_note",
-		Description: "Threats Notes from SentinelOne",
+		Name:        "sentinelone_notes",
+		Description: "Get the threat notes that match the filter.",
 		List: &plugin.ListConfig{
 			Hydrate:    listSentinelOneNotes,
 			KeyColumns: []*plugin.KeyColumn{{Name: "threat_id", Require: plugin.Required}},

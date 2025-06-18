@@ -103,8 +103,8 @@ type SentinelOneAgentFull struct {
 // tableSentinelOneAgents Steampipe Table.
 func tableSentinelOneAgents(_ context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "sentinelone_agent",
-		Description: "List of SentinelOne agents installed on endpoints.",
+		Name:        "sentinelone_agents",
+		Description: "Get the Agents and their data",
 		List: &plugin.ListConfig{
 			Hydrate: listSentinelOneAgents,
 		},
