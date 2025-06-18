@@ -15,11 +15,12 @@ func Plugin(ctx context.Context) *plugin.Plugin {
 			NewInstance: ConfigInstance,
 		},
 		TableMap: map[string]*plugin.Table{
-			"sentinelone_agent":    tableSentinelOneAgents(ctx),
-			"sentinelone_alert":    tableSentinelOneAlerts(ctx),
-			"sentinelone_threat":   tableSentinelOneThreats(ctx),
-			"sentinelone_timeline": tableSentinelOneTimeline(ctx),
-			"sentinelone_note":     tableSentinelOneNotes(ctx),
+			"sentinelone_agent":      tableSentinelOneAgents(ctx),
+			"sentinelone_alert":      tableSentinelOneAlerts(ctx),
+			"sentinelone_threat":     tableSentinelOneThreats(ctx),
+			"sentinelone_timeline":   tableSentinelOneTimeline(ctx),
+			"sentinelone_note":       tableSentinelOneNotes(ctx),
+			"sentinelone_activities": tableSentinelOneActivities(ctx),
 		},
 	}
 }
