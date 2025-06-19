@@ -105,8 +105,16 @@ func tableSentinelOneAgents(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_agents",
 		Description: "Get the Agents and their data",
-		List: &plugin.ListConfig{
-			Hydrate: listSentinelOneAgents,
+		List:        &plugin.ListConfig{Hydrate: listSentinelOneAgents},
+		// API Rate Liming
+		// 200 requests from the same IP address every 100 seconds
+		// 5,000,000 bytes of total request size for each operation every 500,000 seconds (≈138.9 h)
+		// 40 concurrent requests for the same API token
+		HydrateConfig: []plugin.HydrateConfig{
+			{
+				Func:           listSentinelOneAgents,
+				MaxConcurrency: 40,
+			},
 		},
 		Columns: []*plugin.Column{
 			{Name: "account_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AccountID")},
@@ -210,7 +218,7 @@ func (t *SentinelOneClient) ListAgentsRaw(ctx context.Context, d *plugin.QueryDa
 	return t.fetchPaginatedData(ctx, d, "/web/api/v2.1/agents", 1000)
 }
 
-// Stream each threat into Steampipe, stopping at SQL LIMIT or when no more data.
+// Stream each agent into Steampipe, stopping at SQL LIMIT, context cancellation, or when no more data.
 func listSentinelOneAgents(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	// Establish the API client
 	client, err := Connect(ctx, d)
@@ -226,22 +234,27 @@ func listSentinelOneAgents(ctx context.Context, d *plugin.QueryData, _ *plugin.H
 
 	// Iterate over each raw item
 	for _, item := range rawData {
+		// Exit if context has been cancelled
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+
 		m, ok := item.(map[string]interface{})
 		if !ok {
 			continue
 		}
 		b, _ := json.Marshal(m)
 
-		var threat SentinelOneAgentFull
-		if err := json.Unmarshal(b, &threat); err != nil {
+		var agent SentinelOneAgentFull
+		if err := json.Unmarshal(b, &agent); err != nil {
 			plugin.Logger(ctx).Error("listSentinelOneAgents", "unmarshal_error", err)
 			continue
 		}
 
 		// Stream the item into Steampipe
-		d.StreamListItem(ctx, threat)
+		d.StreamListItem(ctx, agent)
 
-		// Stop if the query’s limit has been reached
+		// Stop if the query’s SQL LIMIT has been reached
 		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}

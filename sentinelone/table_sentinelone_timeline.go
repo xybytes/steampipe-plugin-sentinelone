@@ -98,7 +98,7 @@ func (t *SentinelOneClient) ListTimelineRaw(ctx context.Context, d *plugin.Query
 	return t.fetchPaginatedData(ctx, d, endpoint, 1000)
 }
 
-// Stream each alert into Steampipe
+// Stream each timeline entry into Steampipe, respecting context cancellation and SQL LIMIT.
 func listSentinelOneTimeline(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	// Establish the API client
 	client, err := Connect(ctx, d)
@@ -114,22 +114,27 @@ func listSentinelOneTimeline(ctx context.Context, d *plugin.QueryData, _ *plugin
 
 	// Iterate over each raw item
 	for _, item := range rawData {
+		// Exit early if the context has been cancelled
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+
 		m, ok := item.(map[string]interface{})
 		if !ok {
 			continue
 		}
 		b, _ := json.Marshal(m)
 
-		var threat SentinelOneTimelineFull
-		if err := json.Unmarshal(b, &threat); err != nil {
-			plugin.Logger(ctx).Error("SentinelOneTimelineFull", "unmarshal_error", err)
+		var entry SentinelOneTimelineFull
+		if err := json.Unmarshal(b, &entry); err != nil {
+			plugin.Logger(ctx).Error("listSentinelOneTimeline", "unmarshal_error", err)
 			continue
 		}
 
 		// Stream the item into Steampipe
-		d.StreamListItem(ctx, threat)
+		d.StreamListItem(ctx, entry)
 
-		// Stop if the query’s limit has been reached
+		// Stop if the query’s SQL LIMIT has been reached
 		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}

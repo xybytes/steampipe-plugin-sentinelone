@@ -119,6 +119,16 @@ func tableSentinelOneAlerts(_ context.Context) *plugin.Table {
 		Name:        "sentinelone_alerts",
 		Description: "Get list of alerts",
 		List:        &plugin.ListConfig{Hydrate: listSentinelOneAlerts},
+		// API Rate Liming
+		// 200 requests from the same IP address every 100 seconds
+		// 5,000,000 bytes of total request size for each operation every 500,000 seconds (≈138.9 h)
+		// 40 concurrent requests for the same API token
+		HydrateConfig: []plugin.HydrateConfig{
+			{
+				Func:           listSentinelOneAgents,
+				MaxConcurrency: 40,
+			},
+		},
 		Columns: []*plugin.Column{
 			//AlertInfo
 			{Name: "alert_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("AlertInfo.AlertID")},
@@ -227,7 +237,7 @@ func (t *SentinelOneClient) ListAlertsRaw(ctx context.Context, d *plugin.QueryDa
 	return t.fetchPaginatedData(ctx, d, "/web/api/v2.1/cloud-detection/alerts", 1000)
 }
 
-// Stream each alert into Steampipe
+// Stream each alert into Steampipe, respecting context cancellation and SQL LIMIT.
 func listSentinelOneAlerts(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	// Establish the API client
 	client, err := Connect(ctx, d)
@@ -243,22 +253,27 @@ func listSentinelOneAlerts(ctx context.Context, d *plugin.QueryData, _ *plugin.H
 
 	// Iterate over each raw item
 	for _, item := range rawData {
+		// Exit if context has been cancelled
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+
 		m, ok := item.(map[string]interface{})
 		if !ok {
 			continue
 		}
 		b, _ := json.Marshal(m)
 
-		var threat SentinelOneAlertFull
-		if err := json.Unmarshal(b, &threat); err != nil {
-			plugin.Logger(ctx).Error("SentinelOneAlertFull", "unmarshal_error", err)
+		var alert SentinelOneAlertFull
+		if err := json.Unmarshal(b, &alert); err != nil {
+			plugin.Logger(ctx).Error("listSentinelOneAlerts", "unmarshal_error", err)
 			continue
 		}
 
 		// Stream the item into Steampipe
-		d.StreamListItem(ctx, threat)
+		d.StreamListItem(ctx, alert)
 
-		// Stop if the query’s limit has been reached
+		// Stop if the query’s SQL LIMIT has been reached
 		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}

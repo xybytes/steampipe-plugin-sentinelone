@@ -96,8 +96,16 @@ func tableSentinelOneThreats(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_threats",
 		Description: "Get data of threats",
-		List: &plugin.ListConfig{
-			Hydrate: listSentinelOneThreats,
+		List:        &plugin.ListConfig{Hydrate: listSentinelOneThreats},
+		// API Rate Liming
+		// 200 requests from the same IP address every 100 seconds
+		// 5,000,000 bytes of total request size for each operation every 500,000 seconds (≈138.9 h)
+		// 40 concurrent requests for the same API token
+		HydrateConfig: []plugin.HydrateConfig{
+			{
+				Func:           listSentinelOneAgents,
+				MaxConcurrency: 40,
+			},
 		},
 		Columns: []*plugin.Column{
 			{Name: "id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("ID")},
@@ -178,7 +186,7 @@ func (t *SentinelOneClient) ListThreatsRaw(ctx context.Context, d *plugin.QueryD
 	return t.fetchPaginatedData(ctx, d, "/web/api/v2.1/threats", 1000)
 }
 
-// Stream each threat into Steampipe
+// Stream each threat into Steampipe, respecting context cancellation and SQL LIMIT.
 func listSentinelOneThreats(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	// Establish the API client
 	client, err := Connect(ctx, d)
@@ -194,6 +202,11 @@ func listSentinelOneThreats(ctx context.Context, d *plugin.QueryData, _ *plugin.
 
 	// Iterate over each raw item
 	for _, item := range rawData {
+		// Exit early if the context has been cancelled
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+
 		m, ok := item.(map[string]interface{})
 		if !ok {
 			continue
@@ -209,7 +222,7 @@ func listSentinelOneThreats(ctx context.Context, d *plugin.QueryData, _ *plugin.
 		// Stream the item into Steampipe
 		d.StreamListItem(ctx, threat)
 
-		// Stop if the query’s limit has been reached
+		// Stop if the query’s SQL LIMIT has been reached
 		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}

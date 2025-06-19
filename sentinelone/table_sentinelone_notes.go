@@ -59,7 +59,7 @@ func (c *SentinelOneClient) ListNotesRaw(ctx context.Context, d *plugin.QueryDat
 	return c.fetchPaginatedData(ctx, d, endpoint, 1000)
 }
 
-// Streams each note into Steampipe
+// Streams each note into Steampipe, respecting context cancellation and SQL LIMIT.
 func listSentinelOneNotes(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 	client, err := Connect(ctx, d)
 	if err != nil {
@@ -72,6 +72,11 @@ func listSentinelOneNotes(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 	}
 
 	for _, item := range rawData {
+		// Exit if the context has been cancelled
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+
 		m, ok := item.(map[string]interface{})
 		if !ok {
 			continue
@@ -80,12 +85,14 @@ func listSentinelOneNotes(ctx context.Context, d *plugin.QueryData, _ *plugin.Hy
 
 		var note SentinelOneNoteFull
 		if err := json.Unmarshal(b, &note); err != nil {
-			plugin.Logger(ctx).Error("sentinelone_note", "unmarshal_error", err)
+			plugin.Logger(ctx).Error("listSentinelOneNotes", "unmarshal_error", err)
 			continue
 		}
 
+		// Stream the item into Steampipe
 		d.StreamListItem(ctx, note)
 
+		// Stop if the query’s SQL LIMIT has been reached
 		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}

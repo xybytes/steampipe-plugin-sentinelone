@@ -36,8 +36,16 @@ func tableSentinelOneCVEs(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_cves",
 		Description: "Get the CVE vulnerability data for each CVE.",
-		List: &plugin.ListConfig{
-			Hydrate: listSentinelOneCVEs,
+		List:        &plugin.ListConfig{Hydrate: listSentinelOneCVEs},
+		// API Rate Liming
+		// 200 requests from the same IP address every 100 seconds
+		// 5,000,000 bytes of total request size for each operation every 500,000 seconds (≈138.9 h)
+		// 40 concurrent requests for the same API token
+		HydrateConfig: []plugin.HydrateConfig{
+			{
+				Func:           listSentinelOneAgents,
+				MaxConcurrency: 40,
+			},
 		},
 		Columns: []*plugin.Column{
 			{Name: "application", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Application")},
@@ -77,25 +85,38 @@ func listSentinelOneCVEs(ctx context.Context, d *plugin.QueryData, _ *plugin.Hyd
 	if err != nil {
 		return nil, err
 	}
+
 	rawData, _, _, err := client.ListCVEsRaw(ctx, d)
 	if err != nil {
 		return nil, err
 	}
+
 	for _, item := range rawData {
+		// Exit if context has been cancelled
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+
 		m, ok := item.(map[string]interface{})
 		if !ok {
 			continue
 		}
 		b, _ := json.Marshal(m)
+
 		var v SentinelOneVulnerability
 		if err := json.Unmarshal(b, &v); err != nil {
 			plugin.Logger(ctx).Error("listSentinelOneCVEs", "unmarshal_error", err)
 			continue
 		}
+
+		// Stream the item into Steampipe
 		d.StreamListItem(ctx, v)
+
+		// Stop if the query’s SQL LIMIT has been reached
 		if d.RowsRemaining(ctx) == 0 {
-			break
+			return nil, nil
 		}
 	}
+
 	return nil, nil
 }

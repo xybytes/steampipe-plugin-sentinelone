@@ -27,8 +27,16 @@ func tableSentinelOneApplications(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_applications",
 		Description: "Get data for each version of all applications.",
-		List: &plugin.ListConfig{
-			Hydrate: listSentinelOneApplications,
+		List:        &plugin.ListConfig{Hydrate: listSentinelOneApplications},
+		// API Rate Liming
+		// 200 requests from the same IP address every 100 seconds
+		// 5,000,000 bytes of total request size for each operation every 500,000 seconds (≈138.9 h)
+		// 40 concurrent requests for the same API token
+		HydrateConfig: []plugin.HydrateConfig{
+			{
+				Func:           listSentinelOneAgents,
+				MaxConcurrency: 40,
+			},
 		},
 		Columns: []*plugin.Column{
 			{Name: "application_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("ApplicationId")},
@@ -68,6 +76,11 @@ func listSentinelOneApplications(ctx context.Context, d *plugin.QueryData, _ *pl
 	}
 
 	for _, item := range rawData {
+		// Exit if context has been cancelled
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+
 		m, ok := item.(map[string]interface{})
 		if !ok {
 			continue
@@ -80,9 +93,12 @@ func listSentinelOneApplications(ctx context.Context, d *plugin.QueryData, _ *pl
 			continue
 		}
 
+		// Stream the item into Steampipe
 		d.StreamListItem(ctx, app)
+
+		// Stop if the query’s SQL LIMIT has been reached
 		if d.RowsRemaining(ctx) == 0 {
-			break
+			return nil, nil
 		}
 	}
 

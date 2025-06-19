@@ -316,6 +316,11 @@ func listSentinelOneActivity(ctx context.Context, d *plugin.QueryData, _ *plugin
 	}
 
 	for _, item := range rawData {
+		// Exit if context has been cancelled
+		if ctx.Err() != nil {
+			return nil, ctx.Err()
+		}
+
 		m, ok := item.(map[string]interface{})
 		if !ok {
 			continue
@@ -328,10 +333,14 @@ func listSentinelOneActivity(ctx context.Context, d *plugin.QueryData, _ *plugin
 			continue
 		}
 
+		// Stream the item into Steampipe
 		d.StreamListItem(ctx, activity)
+
+		// 2) Stop if the query’s SQL LIMIT has been reached
 		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}
 	}
+
 	return nil, nil
 }
