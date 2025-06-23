@@ -336,7 +336,7 @@ func listSentinelOneActivity(ctx context.Context, d *plugin.QueryData, _ *plugin
 		// Stream the item into Steampipe
 		d.StreamListItem(ctx, activity)
 
-		// 2) Stop if the query’s SQL LIMIT has been reached
+		// Stop if the query’s SQL LIMIT has been reached
 		if d.RowsRemaining(ctx) == 0 {
 			return nil, nil
 		}
