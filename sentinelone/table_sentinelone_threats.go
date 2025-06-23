@@ -92,6 +92,7 @@ type NetworkInterface struct {
 	ID       string   `json:"id"`
 }
 
+// Defines the Steampipe table
 func tableSentinelOneThreats(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_threats",
@@ -175,7 +176,7 @@ func tableSentinelOneThreats(_ context.Context) *plugin.Table {
 	}
 }
 
-// ListThreatsRaw retrieves paginated threat data
+// retrieves paginated threat data
 func (t *SentinelOneClient) ListThreatsRaw(ctx context.Context, d *plugin.QueryData) (
 	[]interface{},
 	map[string]interface{},

@@ -9,7 +9,6 @@ import (
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin/transform"
 )
 
-// top-level “envelope” for a single alert
 type SentinelOneAlertFull struct {
 	AlertInfo           AlertInfo   `json:"alertInfo"`
 	RuleInfo            RuleInfo    `json:"ruleInfo"`
@@ -18,7 +17,6 @@ type SentinelOneAlertFull struct {
 	TargetProcessInfo TargetProcessInfo `json:"targetProcessInfo"`
 }
 
-// corresponds to the JSON object at .alertInfo
 type AlertInfo struct {
 	AlertID                     string `json:"alertId"`
 	IndicatorName               string `json:"indicatorName"`
@@ -59,7 +57,6 @@ type AlertInfo struct {
 	ReportedAt                  string `json:"reportedAt"`
 }
 
-// corresponds to the JSON object at .ruleInfo
 type RuleInfo struct {
 	RuleID            string `json:"id"`
 	RuleName          string `json:"name"`
@@ -72,7 +69,6 @@ type RuleInfo struct {
 	RuleTreatAsThreat string `json:"treatAsThreat"`
 }
 
-// corresponds to the JSON object at .sourceParentProcessInfo
 type ProcessInfo struct {
 	IntegrityLevel     string `json:"integrityLevel"`
 	Commandline        string `json:"commandline"`
@@ -93,7 +89,6 @@ type ProcessInfo struct {
 	UniqueID           string `json:"uniqueId"`
 }
 
-// corresponds to the JSON object at .targetProcessInfo
 type TargetProcessInfo struct {
 	FilePath           string `json:"tgtFilePath"`
 	FileIsSigned       string `json:"tgtFileIsSigned"`
@@ -114,6 +109,7 @@ type TargetProcessInfo struct {
 	ProcStorylineID    string `json:"tgtProcStorylineId"`
 }
 
+// Defines the Steampipe table
 func tableSentinelOneAlerts(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_alerts",
@@ -226,7 +222,7 @@ func tableSentinelOneAlerts(_ context.Context) *plugin.Table {
 	}
 }
 
-// ListThreatsRaw retrieves paginated threat data
+// retrieves paginated threat data
 func (t *SentinelOneClient) ListAlertsRaw(ctx context.Context, d *plugin.QueryData) (
 	[]interface{},
 	map[string]interface{},

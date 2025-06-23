@@ -207,7 +207,7 @@ func tableSentinelOneAgents(_ context.Context) *plugin.Table {
 	}
 }
 
-// ListThreatsRaw retrieves paginated threat data
+// retrieves paginated threat data
 func (t *SentinelOneClient) ListAgentsRaw(ctx context.Context, d *plugin.QueryData) (
 	[]interface{},
 	map[string]interface{},

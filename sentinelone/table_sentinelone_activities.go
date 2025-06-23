@@ -151,6 +151,7 @@ type SentinelOneActivityFull struct {
 	UpdatedAt            time.Time    `json:"updatedAt"`
 }
 
+// Defines the Steampipe table
 func tableSentinelOneActivities(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_activities",

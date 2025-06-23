@@ -40,6 +40,7 @@ type Data struct {
 	UserName             string `json:"userName"`
 }
 
+// Defines the Steampipe table
 func tableSentinelOneTimeline(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_timeline",
@@ -83,6 +84,7 @@ func tableSentinelOneTimeline(_ context.Context) *plugin.Table {
 	}
 }
 
+// retrieves paginated threat data
 func (t *SentinelOneClient) ListTimelineRaw(ctx context.Context, d *plugin.QueryData) (
 	[]interface{},
 	map[string]interface{},

@@ -71,6 +71,7 @@ func tableSentinelOneCVEs(_ context.Context) *plugin.Table {
 	}
 }
 
+// retrieves paginated threat data
 func (c *SentinelOneClient) ListCVEsRaw(ctx context.Context, d *plugin.QueryData) (
 	[]interface{},
 	map[string]interface{},
