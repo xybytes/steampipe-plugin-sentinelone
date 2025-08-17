@@ -1,5 +1,7 @@
 module steampipe-plugin-sentinelone
 
+//module github.com/xybytes/steampipe-plugin-sentinelone
+
 go 1.24.0
 
 require github.com/turbot/steampipe-plugin-sdk/v5 v5.11.7

@@ -24,21 +24,21 @@ type SentinelOneNoteFull struct {
 // Defines the Steampipe table
 func tableSentinelOneNotes(_ context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "sentinelone_notes",
+		Name:        "sentinelone_note",
 		Description: "Get the threat notes that match the filter.",
 		List: &plugin.ListConfig{
 			Hydrate:    listSentinelOneNotes,
 			KeyColumns: []*plugin.KeyColumn{{Name: "threat_id", Require: plugin.Required}},
 		},
 		Columns: []*plugin.Column{
-			{Name: "threat_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromQual("threat_id")},
-			{Name: "created_at", Type: sdkproto.ColumnType_TIMESTAMP, Transform: transform.FromField("CreatedAt")},
-			{Name: "creator", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Creator")},
-			{Name: "creator_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("CreatorId")},
-			{Name: "edited", Type: sdkproto.ColumnType_BOOL, Transform: transform.FromField("Edited")},
-			{Name: "id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Id")},
-			{Name: "text", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Text")},
-			{Name: "updated_at", Type: sdkproto.ColumnType_TIMESTAMP, Transform: transform.FromField("UpdatedAt")},
+			{Name: "threat_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromQual("threat_id"), Description: "Identifier of the associated threat."},
+			{Name: "created_at", Type: sdkproto.ColumnType_TIMESTAMP, Transform: transform.FromField("CreatedAt"), Description: "Timestamp when the note was created."},
+			{Name: "creator", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Creator"), Description: "Username of the note’s creator."},
+			{Name: "creator_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("CreatorId"), Description: "Unique identifier of the note’s creator."},
+			{Name: "edited", Type: sdkproto.ColumnType_BOOL, Transform: transform.FromField("Edited"), Description: "Indicates whether the note has been edited."},
+			{Name: "id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Id"), Description: "Unique identifier of the note."},
+			{Name: "text", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Text"), Description: "Content of the note."},
+			{Name: "updated_at", Type: sdkproto.ColumnType_TIMESTAMP, Transform: transform.FromField("UpdatedAt"), Description: "Timestamp when the note was last updated."},
 		},
 	}
 }

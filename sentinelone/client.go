@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
@@ -28,6 +29,48 @@ type HTTPError struct {
 
 func (he *HTTPError) Error() string {
 	return fmt.Sprintf("HTTP %d %s: %s", he.Status, he.Message, he.Body)
+}
+
+type s1APIError struct {
+	Errors []struct {
+		Code   int     `json:"code"`
+		Title  string  `json:"title"`
+		Detail *string `json:"detail"`
+	} `json:"errors"`
+}
+
+func parseS1APIError(body []byte) *s1APIError {
+	var s s1APIError
+	if err := json.Unmarshal(body, &s); err != nil {
+		return nil
+	}
+	if len(s.Errors) == 0 {
+		return nil
+	}
+	return &s
+}
+
+func makeAuthExpiredError(rawBody string) error {
+	help := `
+Authentication failed (expired or invalid API token).
+
+How to refresh your credentials:
+  1) Generate a new API token in the SentinelOne Console (User → API Tokens).
+  2a) If you use environment variables export SENTINELONE_API_TOKEN="<NEW_TOKEN>" then re-run your query; OR
+  2b) If you use a Steampipe connection file (e.g., ~/.steampipe/config/sentinelone.spc):
+        connection "sentinelone" {
+          plugin     = "sentinelone"
+          client_id  = "<YOUR_TENANT>"
+          auth_token = "<NEW_TOKEN>"
+        }
+      then reload Steampipe.
+
+Tip: ensure SENTINELONE_CLIENT_ID matches your tenant subdomain
+(e.g., "acme" if the URL is https://acme.sentinelone.net).
+
+Raw API response (for debugging):
+`
+	return fmt.Errorf("%s%s", strings.TrimSpace(help), "\n"+strings.TrimSpace(rawBody))
 }
 
 // BuildURL constructs the full URL for SentinelOne based on the path and parameters
@@ -70,6 +113,18 @@ func (c *SentinelOneClient) Get(fullURL string) ([]byte, error) {
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
+	}
+
+	// Specific handling for 401 (expired/invalid token)
+	if resp.StatusCode == http.StatusUnauthorized {
+		if parsed := parseS1APIError(body); parsed != nil {
+			for _, e := range parsed.Errors {
+				if e.Code == 4010010 || strings.EqualFold(e.Title, "Authentication Failed") {
+					return nil, makeAuthExpiredError(string(body))
+				}
+			}
+		}
+		return nil, makeAuthExpiredError(string(body))
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
@@ -174,7 +229,6 @@ func Connect(_ context.Context, d *plugin.QueryData) (*SentinelOneClient, error)
 
 	cfg := GetConfig(d.Connection)
 
-	// Retrieves the tenant ID from environment variables or from config.ClientID
 	tenant := os.Getenv("SENTINELONE_CLIENT_ID")
 	if cfg.ClientID != nil {
 		tenant = *cfg.ClientID
@@ -183,7 +237,6 @@ func Connect(_ context.Context, d *plugin.QueryData) (*SentinelOneClient, error)
 		return nil, errors.New("SENTINELONE_CLIENT_ID must be set in connection config or environment")
 	}
 
-	// Retrieves the token from environment variables or from config
 	token := os.Getenv("SENTINELONE_API_TOKEN")
 	if cfg.AuthToken != nil {
 		token = *cfg.AuthToken
@@ -204,52 +257,3 @@ func Connect(_ context.Context, d *plugin.QueryData) (*SentinelOneClient, error)
 	d.ConnectionManager.Cache.Set(cacheKey, client)
 	return client, nil
 }
-
-/*
-// Fetch unprocessed data from the API with pagination. (No SQL Limit)
-func (t *SentinelOneClient) fetchPaginatedData(endpoint string, limitPerPage int) ([]interface{}, map[string]interface{}, []interface{}, error) {
-	var allData []interface{}
-	var lastPagination map[string]interface{}
-	var lastErrors []interface{}
-	cursor := ""
-
-	for {
-		params := map[string]string{
-			"limit": fmt.Sprintf("%d", limitPerPage),
-		}
-		if cursor != "" {
-			params["cursor"] = cursor
-		}
-
-		fullURL, err := t.BuildURL(endpoint, params)
-		if err != nil {
-			return nil, nil, nil, err
-		}
-
-		body, err := t.Get(fullURL)
-		if err != nil {
-			return nil, nil, nil, err
-		}
-
-		var resp struct {
-			Data       []interface{}          `json:"data"`
-			Pagination map[string]interface{} `json:"pagination"`
-			Errors     []interface{}          `json:"errors"`
-		}
-		if err := json.Unmarshal(body, &resp); err != nil {
-			return nil, nil, nil, fmt.Errorf("failed to parse JSON: %w", err)
-		}
-
-		allData = append(allData, resp.Data...)
-		lastPagination = resp.Pagination
-		lastErrors = resp.Errors
-
-		nextCursor, _ := resp.Pagination["nextCursor"].(string)
-		if nextCursor == "" || nextCursor == cursor {
-			break
-		}
-		cursor = nextCursor
-	}
-
-	return allData, lastPagination, lastErrors, nil
-}*/

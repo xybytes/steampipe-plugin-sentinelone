@@ -25,7 +25,7 @@ type SentinelOneApplication struct {
 
 func tableSentinelOneApplications(_ context.Context) *plugin.Table {
 	return &plugin.Table{
-		Name:        "sentinelone_applications",
+		Name:        "sentinelone_application",
 		Description: "Get data for each version of all applications.",
 		List:        &plugin.ListConfig{Hydrate: listSentinelOneApplications},
 		// API Rate Liming
@@ -39,16 +39,16 @@ func tableSentinelOneApplications(_ context.Context) *plugin.Table {
 			},
 		},
 		Columns: []*plugin.Column{
-			{Name: "application_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("ApplicationId")},
-			{Name: "cve_count", Type: sdkproto.ColumnType_INT, Transform: transform.FromField("CveCount")},
-			{Name: "days_detected", Type: sdkproto.ColumnType_INT, Transform: transform.FromField("DaysDetected")},
-			{Name: "detection_date", Type: sdkproto.ColumnType_TIMESTAMP, Transform: transform.FromField("DetectionDate")},
-			{Name: "endpoint_count", Type: sdkproto.ColumnType_INT, Transform: transform.FromField("EndpointCount")},
-			{Name: "estimate", Type: sdkproto.ColumnType_BOOL, Transform: transform.FromField("Estimate")},
-			{Name: "highest_nvd_base_score", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("HighestNvdBaseScore")},
-			{Name: "highest_severity", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("HighestSeverity")},
-			{Name: "name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Name")},
-			{Name: "vendor", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Vendor")},
+			{Name: "application_id", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("ApplicationId"), Description: "Unique identifier of the application."},
+			{Name: "cve_count", Type: sdkproto.ColumnType_INT, Transform: transform.FromField("CveCount"), Description: "Number of CVEs associated with the application."},
+			{Name: "days_detected", Type: sdkproto.ColumnType_INT, Transform: transform.FromField("DaysDetected"), Description: "Number of days this application has been detected."},
+			{Name: "detection_date", Type: sdkproto.ColumnType_TIMESTAMP, Transform: transform.FromField("DetectionDate"), Description: "Timestamp when the application was first detected."},
+			{Name: "endpoint_count", Type: sdkproto.ColumnType_INT, Transform: transform.FromField("EndpointCount"), Description: "Number of endpoints on which the application is present."},
+			{Name: "estimate", Type: sdkproto.ColumnType_BOOL, Transform: transform.FromField("Estimate"), Description: "Indicates if the endpoint count is an estimate."},
+			{Name: "highest_nvd_base_score", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("HighestNvdBaseScore"), Description: "Highest NVD base score among all CVEs."},
+			{Name: "highest_severity", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("HighestSeverity"), Description: "Highest severity level among all CVEs."},
+			{Name: "name", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Name"), Description: "Name of the application."},
+			{Name: "vendor", Type: sdkproto.ColumnType_STRING, Transform: transform.FromField("Vendor"), Description: "Vendor or publisher of the application."},
 		},
 	}
 }
