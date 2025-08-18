@@ -1,5 +1,3 @@
-![image](https://hub.steampipe.io/images/plugins/turbot/sentinelone-social-graphic.png)
-
 ![Steampipe + SentinelOne](docs/sentinelone-social-graphic.png)
 
 # Steampipe Plugin for SentinelOne
