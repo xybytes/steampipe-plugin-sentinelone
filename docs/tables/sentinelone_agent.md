@@ -3,7 +3,7 @@ title: "Steampipe Table: sentinelone_agent - Query SentinelOne Agents using SQL"
 description: "Allows users to query SentinelOne Agents, providing detailed information about agents across the SentinelOne platform."
 ---
 
-# Table: sentinelone_agetn - Query SentinelOne Agetns using SQL
+# Table: sentinelone_agent - Query SentinelOne Agetns using SQL
 
 SentinelOne Agents form the core of endpoint protection within the SentinelOne platform. Installed on endpoints, these agents continuously monitor system activity, applying behavioral AI and machine learning to detect and mitigate threats in real time. Each agent collects and reports comprehensive data, including device details, operating system information, network configuration, policy status, and security posture. This centralized visibility empowers security teams to track endpoint compliance, identify vulnerabilities, and respond proactively to emerging threats.
 

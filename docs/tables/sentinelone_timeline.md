@@ -18,8 +18,6 @@ Use the `sentinelone_timeline` table to:
 
 ## Examples
 
----
-
 ### Show the timeline for a specific threat
 List all events tied to a given `threat_id` in chronological order.
 

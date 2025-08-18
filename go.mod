@@ -1,10 +1,8 @@
-module steampipe-plugin-sentinelone
-
-//module github.com/xybytes/steampipe-plugin-sentinelone
+module github.com/xybytes/steampipe-plugin-sentinelone
 
 go 1.24.0
 
-require github.com/turbot/steampipe-plugin-sdk/v5 v5.11.7
+require github.com/turbot/steampipe-plugin-sdk/v5 v5.13.0
 
 require (
 	cloud.google.com/go v0.112.1 // indirect
@@ -92,7 +90,7 @@ require (
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56 // indirect
 	golang.org/x/mod v0.19.0 // indirect
 	golang.org/x/net v0.38.0 // indirect
-	golang.org/x/oauth2 v0.21.0 // indirect
+	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sync v0.12.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/text v0.23.0 // indirect

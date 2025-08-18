@@ -18,7 +18,7 @@ import (
 type SentinelOneClient struct {
 	BaseURL    string
 	HTTPClient *http.Client
-	AuthToken  string
+	APIToken   string
 }
 
 type HTTPError struct {
@@ -61,7 +61,7 @@ How to refresh your credentials:
         connection "sentinelone" {
           plugin     = "sentinelone"
           client_id  = "<YOUR_TENANT>"
-          auth_token = "<NEW_TOKEN>"
+          api_token = "<NEW_TOKEN>"
         }
       then reload Steampipe.
 
@@ -100,7 +100,7 @@ func (c *SentinelOneClient) Get(fullURL string) ([]byte, error) {
 		return nil, err
 	}
 
-	req.Header.Set("Authorization", fmt.Sprintf("ApiToken %s", c.AuthToken))
+	req.Header.Set("Authorization", fmt.Sprintf("ApiToken %s", c.APIToken))
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("User-Agent", "Steampipe/SentinelOne")
 
@@ -238,16 +238,16 @@ func Connect(_ context.Context, d *plugin.QueryData) (*SentinelOneClient, error)
 	}
 
 	token := os.Getenv("SENTINELONE_API_TOKEN")
-	if cfg.AuthToken != nil {
-		token = *cfg.AuthToken
+	if cfg.APIToken != nil {
+		token = *cfg.APIToken
 	}
 	if token == "" {
 		return nil, errors.New("SENTINELONE_API_TOKEN must be set in connection config or environment")
 	}
 
 	client := &SentinelOneClient{
-		BaseURL:   tenant,
-		AuthToken: token,
+		BaseURL:  tenant,
+		APIToken: token,
 		HTTPClient: &http.Client{
 			Timeout:   30 * time.Second,
 			Transport: &authTransport{underlying: http.DefaultTransport, token: token},
