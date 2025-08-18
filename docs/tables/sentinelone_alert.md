@@ -46,7 +46,7 @@ where
 ### List open alerts from the last 4 days
 Determine the areas in which open detections have occurred in the past four days, which can help in identifying potential security threats and ensuring timely response to the same.
 
-```
+```sql+postgres
 select
   src_ip,
   dst_ip,

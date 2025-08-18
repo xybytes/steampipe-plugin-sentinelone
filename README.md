@@ -1,6 +1,8 @@
 ![image](https://hub.steampipe.io/images/plugins/turbot/sentinelone-social-graphic.png)
 
-# Sentinelone Plugin for Steampipe
+![Steampipe + SentinelOne](docs/sentinelone-social-graphic.png)
+
+# Steampipe Plugin for SentinelOne
 
 Use SQL to query SentinelOne configuration and more from SentinelOne.
 
@@ -15,7 +17,7 @@ Use SQL to query SentinelOne configuration and more from SentinelOne.
 Install the plugin with [Steampipe](https://steampipe.io):
 
 ```shell
-steampipe plugin install slack
+steampipe plugin install xybytes/sentinelone
 ```
 
 Run a query:
@@ -27,7 +29,7 @@ select
   agent_version,
   os_name,
 from
-  sentinelone_agent
+  sentinelone_agent;
 ```
 ## Engines
 
@@ -67,7 +69,6 @@ Further reading:
 
 - [Writing plugins](https://steampipe.io/docs/develop/writing-plugins)
 - [Writing your first table](https://steampipe.io/docs/develop/writing-your-first-table)
-
 
 ## Open Source & Contributing
 

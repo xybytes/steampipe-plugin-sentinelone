@@ -1,7 +1,7 @@
 ---
 organization: Turbot
 category: ["security"]
-brand_color: "#5C2D91"
+brand_color: "#844FBA"
 display_name: SentinelOne
 name: sentinelone
 description: SentinelOne is an autonomous cybersecurity platform that provides comprehensive protection against various cyber threats.
@@ -26,7 +26,7 @@ select
   dst_ip
 from 
   sentinelone_alerts
-limit 50
+limit 50;
 ```
 
 ## Documentation
@@ -40,7 +40,7 @@ limit 50
 Download and install the latest SentinelOne plugin:
 
 ```shell
-steampipe plugin install sentinelone
+steampipe plugin install xybytes/sentinelone
 ```
 
 ### Configuration
@@ -53,13 +53,13 @@ connection "sentinelone" {
 
   # SentinelOne client ID
   # Can also be set with the SENTINELONE_CLIENT_ID environment variable
-  client_id        = "companyname"
+  # client_id        = "companyname"
   
   # SentinelOne JWT Token
   # Can also be set with the SENTINELONE_API_TOKEN environment variable
-  auth_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
+  # api_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
 }
 ```
 
 - `client_id` - (Required) The client ID. Can also be set with the `SENTINELONE_CLIENT_ID` environment variable.
-- `auth_token` - (Required) The API Access Token. Can also be set with the `SENTINELONE_API_TOKEN` environment variable.
+- `api_token` - (Required) The API Access Token. Can also be set with the `SENTINELONE_API_TOKEN` environment variable.

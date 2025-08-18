@@ -1,7 +1,7 @@
 package main
 
 import (
-	"steampipe-plugin-sentinelone/sentinelone"
+	"github.com/xybytes/steampipe-plugin-sentinelone/sentinelone"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/plugin"
 )

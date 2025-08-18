@@ -15,8 +15,6 @@ Use the `sentinelone_note` table to review, audit, and manage analyst notes tied
 
 ## Examples
 
----
-
 ### List notes for a specific threat
 Retrieve all notes related to a given threat ID for better incident context.
 

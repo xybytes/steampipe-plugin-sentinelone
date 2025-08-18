@@ -15,9 +15,7 @@ Use the `sentinelone_cve` table to identify vulnerabilities impacting your appli
 
 ## Examples
 
----
-
-### **Basic info**
+### Basic info
 Retrieve CVEs along with application name, vendor, severity, and CVSS base score.
 
 ```sql+postgres
