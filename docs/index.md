@@ -1,7 +1,7 @@
 ---
 organization: Turbot
 category: ["security"]
-brand_color: "#844FBA"
+brand_color: "#6100FF"
 display_name: SentinelOne
 name: sentinelone
 description: SentinelOne is an autonomous cybersecurity platform that provides comprehensive protection against various cyber threats.
