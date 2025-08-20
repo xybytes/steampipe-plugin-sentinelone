@@ -32,6 +32,20 @@ order by
 limit 10;
 ```
 
+```sql+sqlite
+select
+  cve_id,
+  application_name,
+  application_vendor,
+  severity,
+  base_score
+from
+  sentinelone_cve
+order by
+  base_score desc
+limit 10;
+```
+
 ### Endpoints with the most vulnerabilities
 Detect which endpoints have the highest number of detected CVEs.
 
@@ -44,7 +58,19 @@ from
 group by
   endpoint_name
 order by
-  cve_count desc
+  cve_count desc;
+```
+
+```sql+sqlite
+select
+  endpoint_name,
+  count(*) as cve_count
+from
+  sentinelone_cve
+group by
+  endpoint_name
+order by
+  cve_count desc;
 ```
 
 ### CVEs by operating system
@@ -59,5 +85,17 @@ from
 group by
   os_type
 order by
-  cve_count desc
+  cve_count desc;
+```
+
+```sql+sqlite
+select
+  os_type,
+  count(*) as cve_count
+from
+  sentinelone_cve
+group by
+  os_type
+order by
+  cve_count desc;
 ```

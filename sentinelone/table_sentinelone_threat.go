@@ -96,7 +96,7 @@ type NetworkInterface struct {
 func tableSentinelOneThreats(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_threat",
-		Description: "Get data of threats",
+		Description: "Get data of threats.",
 		List:        &plugin.ListConfig{Hydrate: listSentinelOneThreats},
 		// API Rate Liming
 		// 200 requests from the same IP address every 100 seconds

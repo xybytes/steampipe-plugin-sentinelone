@@ -104,7 +104,7 @@ type SentinelOneAgentFull struct {
 func tableSentinelOneAgents(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_agent",
-		Description: "Get the Agents and their data",
+		Description: "Get the Agents and their data.",
 		List:        &plugin.ListConfig{Hydrate: listSentinelOneAgents},
 		// API Rate Liming
 		// 200 requests from the same IP address every 100 seconds

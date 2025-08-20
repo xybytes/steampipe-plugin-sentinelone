@@ -30,10 +30,38 @@ from
   sentinelone_activity;
 ```
 
+```sql+sqlite
+select
+  id,
+  activity_type,
+  description,
+  agent_id,
+  site_name,
+  created_at
+from
+  sentinelone_activity;
+```
+
 ### Investigate activities linked to threats
 Discover activities linked to detected threats to improve incident response and trace the sequence of events. Correlating activities with threats provides crucial context, allowing security teams to understand how the threat was handled, which actions were taken, and whether any follow-up steps are required to fully remediate the issue.
 
 ```sql+postgres
+select
+  id,
+  activity_type,
+  description,
+  threat_id,
+  agent_id,
+  created_at
+from
+  sentinelone_activity
+where
+  threat_id is not null
+order by
+  created_at desc;
+```
+
+```sql+sqlite
 select
   id,
   activity_type,
@@ -60,6 +88,20 @@ from
   sentinelone_activity
 where
   created_at >= (current_timestamp - interval '7 days')
+group by
+  activity_type
+order by
+  activity_count desc;
+```
+
+```sql+sqlite
+select
+  activity_type,
+  count(*) as activity_count
+from
+  sentinelone_activity
+where
+  created_at >= datetime('now', '-7 days')
 group by
   activity_type
 order by
