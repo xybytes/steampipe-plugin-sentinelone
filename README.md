@@ -4,8 +4,8 @@
 
 Use SQL to query SentinelOne configuration and more from SentinelOne.
 
-- **[Get started →](https://hub.steampipe.io/plugins/turbot/sentinleone)**
-- Documentation: [Table definitions & examples](https://hub.steampipe.io/plugins/turbot/sentinelone/tables)
+- **[Get started →](https://hub.steampipe.io/plugins/xybytes/sentinelone)**
+- Documentation: [Table definitions & examples](https://hub.steampipe.io/plugins/xybytes/sentinelone/tables)
 - Community: [Join #steampipe on Slack →](https://turbot.com/community/join)
 - Get involved: [Issues](https://github.com/xybytes/steampipe-plugin-sentinelone/issues)
 
