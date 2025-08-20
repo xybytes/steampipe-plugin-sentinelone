@@ -30,7 +30,19 @@ select
 from
   sentinelone_timeline
 where
-  threat_id = '5664677667902588444'
+  threat_id = '5664677667902588444';
+```
+
+```sql+sqlite
+select
+  threat_id,
+  created_at,
+  primary_description,
+  secondary_description
+from
+  sentinelone_timeline
+where
+  threat_id = '5664677667902588444';
 ```
 
 ### Highlight timeline entries with user involvement
@@ -46,5 +58,18 @@ from
   sentinelone_timeline
 where
   threat_id = '5664677667902588444'
-  and data_user_name is not null
+  and data_user_name is not null;
+```
+
+```sql+sqlite
+select
+  threat_id,
+  created_at,
+  data_user_name,
+  primary_description
+from
+  sentinelone_timeline
+where
+  threat_id = '5664677667902588444'
+  and data_user_name is not null;
 ```

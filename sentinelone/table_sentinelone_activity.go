@@ -155,7 +155,7 @@ type SentinelOneActivityFull struct {
 func tableSentinelOneActivities(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_activity",
-		Description: "Get the activities and their data",
+		Description: "Get the activities and their data.",
 		List: &plugin.ListConfig{
 			Hydrate: listSentinelOneActivity,
 		},

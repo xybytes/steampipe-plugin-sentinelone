@@ -27,3 +27,13 @@ from
 where 
   threat_id = '2006880807819281256';
 ```
+
+```sql+sqlite
+select 
+  threat_id, 
+  text
+from 
+  sentinelone_note
+where 
+  threat_id = '2006880807819281256';
+```

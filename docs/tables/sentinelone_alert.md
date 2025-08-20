@@ -24,13 +24,37 @@ select
   target_proc_name,
   target_file_hash_sha1
 from
-  sentinelone_alert
+  sentinelone_alert;
+```
+
+```sql+sqlite
+select
+  alert_id,
+  src_ip,
+  dst_ip,
+  target_proc_name,
+  target_file_hash_sha1
+from
+  sentinelone_alert;
 ```
 
 ### List alerts by a specific target SHA-256 hash
 Retrieve recent security alerts associated with a specific file hash. This query helps you identify potential threats related to that file within the past three months, enabling proactive threat hunting and improved incident response.
 
 ```sql+postgres
+select
+  alert_id,
+  src_ip,
+  dst_ip,
+  target_proc_name,
+  target_file_hash_sha256
+from
+  sentinelone_alert
+where
+  target_file_hash_sha256 = '9001567e2025f83c936b8746fd3b01e44572f70d8ddec39b75b9459f7e5089c8';
+```
+
+```sql+sqlite
 select
   alert_id,
   src_ip,
@@ -59,5 +83,21 @@ where
   incident_status = 'open'
   and created_at >= (current_timestamp - interval '4 days')
 order by
-  created_at desc
+  created_at desc;
+```
+
+```sql+sqlite
+select
+  src_ip,
+  dst_ip,
+  indicator_name,
+  incident_status,
+  created_at
+from
+  sentinelone_alerts
+where
+  incident_status = 'open'
+  and created_at >= datetime('now', '-4 days')
+order by
+  created_at desc;
 ```

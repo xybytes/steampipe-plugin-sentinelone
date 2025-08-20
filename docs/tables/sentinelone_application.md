@@ -25,7 +25,17 @@ select
   detection_date,
   endpoint_count
 from
-  sentinelone_application
+  sentinelone_application;
+```
+
+```sql+sqlite
+select
+  name,
+  vendor,
+  detection_date,
+  endpoint_count
+from
+  sentinelone_application;
 ```
 
 ### Identify applications with known vulnerabilities
@@ -41,7 +51,20 @@ select
 from
   sentinelone_application
 where
-  cve_count > 0
+  cve_count > 0;
+```
+
+```sql+sqlite
+select
+  name,
+  vendor,
+  cve_count,
+  highest_severity,
+  highest_nvd_base_score
+from
+  sentinelone_application
+where
+  cve_count > 0;
 ```
 
 ### Applications with critical severity
@@ -58,8 +81,24 @@ from
   sentinelone_application
 where
   highest_severity = 'HIGH'
+  and cve_count > 0
 order by
   endpoint_count desc;
-  cve_count > 0
+```
+
+```sql+sqlite
+select
+  name,
+  vendor,
+  highest_severity,
+  cve_count,
+  endpoint_count
+from
+  sentinelone_application
+where
+  highest_severity = 'HIGH'
+  and cve_count > 0
+order by
+  endpoint_count desc;
 ```
 

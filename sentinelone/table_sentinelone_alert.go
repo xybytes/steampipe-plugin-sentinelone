@@ -113,7 +113,7 @@ type TargetProcessInfo struct {
 func tableSentinelOneAlerts(_ context.Context) *plugin.Table {
 	return &plugin.Table{
 		Name:        "sentinelone_alert",
-		Description: "Get list of alerts",
+		Description: "Get list of alerts.",
 		List:        &plugin.ListConfig{Hydrate: listSentinelOneAlerts},
 		// API Rate Liming
 		// 200 requests from the same IP address every 100 seconds

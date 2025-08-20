@@ -26,7 +26,20 @@ select
   agent_computer_name,
   site_name
 from
-  sentinelone_threat
+  sentinelone_threat;
+```
+
+```sql+sqlite
+select
+  threat_id,
+  threat_name,
+  confidence_level,
+  sha256,
+  identified_at,
+  agent_computer_name,
+  site_name
+from
+  sentinelone_threat;
 ```
 
 ### Unresolved Threats
@@ -50,10 +63,40 @@ order by
   identified_at desc;
 ```
 
+```sql+sqlite
+select
+  threat_id,
+  threat_name,
+  confidence_level,
+  sha256,
+  identified_at,
+  incident_status,
+  agent_computer_name,
+  site_name
+from
+  sentinelone_threat
+where
+  incident_status != 'Resolved'
+order by
+  identified_at desc;
+```
+
 ### Threats by Detection Type
 Analyze threats based on their detection type to gain insight into how different attack vectors are being identified within your environment. Understanding which detection methods—such as behavioral AI, static analysis, or cloud intelligence—are most commonly triggered can help fine-tune security policies, optimize detection strategies, and strengthen your overall defense posture.
 
 ```sql+postgres
+select
+  detection_type,
+  count(*) as total_threats
+from
+  sentinelone_threat
+group by
+  detection_type
+order by
+  total_threats desc;
+```
+
+```sql+sqlite
 select
   detection_type,
   count(*) as total_threats
