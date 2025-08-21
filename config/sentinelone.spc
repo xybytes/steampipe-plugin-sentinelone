@@ -1,5 +1,5 @@
 connection "sentinelone" {
-  plugin = "sentinelone"
+  plugin = "xybytes/sentinelone"
 
   # SentinelOne client ID
   # Can also be set with the SENTINELONE_CLIENT_ID environment variable
